@@ -16,4 +16,4 @@ If scene is set to "Viewer", the following parameters can be set to test out gea
 | OuterToothDepth | float |
 | Width           | float |
 
-Ex: http://uberyoji.github.io/?scene=viewer&width=1&TeethCount=100&InnertoothDepth=0.02&outertoothdepth=0.05&innerradius=0.75
+Ex: http://uberyoji.github.io/UnityGears?scene=viewer&width=1&TeethCount=100&InnertoothDepth=0.02&outertoothdepth=0.05&innerradius=0.75
