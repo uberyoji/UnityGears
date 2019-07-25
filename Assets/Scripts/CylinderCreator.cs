@@ -60,37 +60,24 @@ public class CylinderCreator : MonoBehaviour
         SkinnedMeshRenderer SMR = GetComponent<SkinnedMeshRenderer>();
         if(SMR)
         {
+            // build bone and binpose arrays
             Transform[] bones = new Transform[Bones.Length];
             Matrix4x4[] bindPoses = new Matrix4x4[Bones.Length];
-
             for (i = 0; i < Bones.Length; i++)
             {
                 bones[i] = Bones[i].transform;
                 bindPoses[i] = bones[i].worldToLocalMatrix * transform.localToWorldMatrix;
             }
 
-            Mesh skinnedMesh = new Mesh();
-            for (i = 0; i < combine.Length; i++)
-                combine[i].mesh.bindposes = bindPoses;
+            // combine mesh first
+            Mesh skinnedMesh = new Mesh();            
             skinnedMesh.CombineMeshes(combine);
+
+            // then weights
+            skinnedMesh.boneWeights = GetBoneWeightFromInfluenceSpheres(skinnedMesh.vertices);
             skinnedMesh.bindposes = bindPoses;
-
-            BoneWeight[] bw = new BoneWeight[skinnedMesh.boneWeights.Length];
-
-            // fix bone mapping since CombineMesh don't understand the meshes share the same bones.
-            for (i=0;i<skinnedMesh.boneWeights.Length;i++)
-            {
-                bw[i].boneIndex0 = skinnedMesh.boneWeights[i].boneIndex0 % 4;
-                bw[i].boneIndex1 = skinnedMesh.boneWeights[i].boneIndex1 % 4;
-                bw[i].boneIndex2 = skinnedMesh.boneWeights[i].boneIndex2 % 4;
-                bw[i].boneIndex3 = skinnedMesh.boneWeights[i].boneIndex3 % 4;
-                bw[i].weight0 = skinnedMesh.boneWeights[i].weight0;
-                bw[i].weight1 = skinnedMesh.boneWeights[i].weight1;
-                bw[i].weight2 = skinnedMesh.boneWeights[i].weight2;
-                bw[i].weight3 = skinnedMesh.boneWeights[i].weight3;                
-            }
-            skinnedMesh.boneWeights = bw;
-
+            
+            // assign to renderer
             SMR.bones = bones;
             SMR.sharedMesh = skinnedMesh;
         }
@@ -162,8 +149,7 @@ public class CylinderCreator : MonoBehaviour
         {
             vertices = V,
             normals = N,
-            triangles = I,
-            boneWeights = GetBoneWeightFromInfluenceSpheres(V)
+            triangles = I
         };
         return M;
     }
@@ -279,8 +265,7 @@ public class CylinderCreator : MonoBehaviour
         {
             vertices = V,
             normals = N,
-            triangles = I,
-            boneWeights = GetBoneWeightFromInfluenceSpheres(V)
+            triangles = I
         };
         return M;
     }
